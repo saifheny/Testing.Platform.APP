@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل التطبيق</title>
+    
+    <!-- === وسوم الميتا لمعاينة الرابط (Open Graph) === -->
+    <meta property="og:title" content="تحميل التطبيق الجديد">
+    <meta property="og:description" content="قم بتنزيل التطبيق الآن واستمتع بالميزات الجديدة!">
+    <!-- تم تغيير الصورة المصغرة للرابط -->
+    <meta property="og:image" content="https://i.postimg.cc/rm50gg3z/Whats-App-Image-2025-10-02-at-4-15-54-PM.jpg">
+    <meta property="og:url" content="YOUR_WEBSITE_URL_HERE"> <!-- اختياري: يمكنك وضع رابط صفحتك هنا -->
+    <meta name="twitter:card" content="summary_large_image">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@700&display=swap');
+
+        /* إعدادات أساسية للصفحة */
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 450px; /* زيادة أقصى عرض لاستيعاب المعرض */
+            margin: 0 auto; /* توسيط المحتوى */
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        
+        /* حاوية الشعار */
+        .logo-container {
+            background-color: white;
+            border-radius: 24px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            display: block;
+        }
+
+        /* حاوية العنوان وزر المشاركة */
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px; /* مسافة بين العنوان وزر المشاركة */
+            position: relative;
+        }
+        
+        /* زر المشاركة */
+        .share-btn {
+            background-color: #f0f2f5;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .share-btn:hover {
+            background-color: #e4e6eb;
+            transform: scale(1.1);
+        }
+        
+        .share-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: #333;
+        }
+        
+        /* إشعار تم النسخ */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            bottom: -35px; /* يظهر أسفل الزر */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+        
+        .share-btn.show-tooltip .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* عنوان التطبيق */
+        .app-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.8em;
+            font-weight: 700;
+            margin: 0;
+            color: #1c1e21;
+        }
+
+        /* وصف التطبيق */
+        .app-description {
+            font-size: 1.1em;
+            color: #555;
+            margin: 10px 0 30px 0;
+        }
+
+        /* === قسم معرض الصور === */
+        .gallery {
+            display: flex;
+            overflow-x: auto; /* يتيح التمرير الأفقي */
+            scroll-snap-type: x mandatory; /* يجعل التمرير يتوقف عند كل صورة */
+            gap: 12px; /* مسافة بين الصور */
+            padding: 10px 0;
+            margin-bottom: 25px;
+            width: 100%;
+            -webkit-overflow-scrolling: touch; /* لتحسين التمرير على أجهزة آبل */
+        }
+        /* لإخفاء شريط التمرير */
+        .gallery::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gallery-item {
+            flex: 0 0 auto; /* يمنع الصور من الانكماش */
+            scroll-snap-align: start; /* يحدد نقطة توقف التمرير */
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: auto; /* العرض يتحدد تلقائياً */
+            height: 250px; /* تحديد ارتفاع موحد للصور */
+            border-radius: 12px;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.03);
+        }
+
+        /* === تصميم الـ Lightbox (عارض الصور) === */
+        .lightbox {
+            display: none; /* مخفي بشكل افتراضي */
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 85%;
+            display: block;
+            margin: auto;
+        }
+
+        .lightbox-close, .lightbox-prev, .lightbox-next {
+            cursor: pointer;
+            position: absolute;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            user-select: none; /* لمنع تحديد النص */
+        }
+        
+        .lightbox-close:hover, .lightbox-prev:hover, .lightbox-next:hover {
+            color: #bbb;
+        }
+
+        .lightbox-close {
+            top: 20px;
+            right: 35px;
+        }
+        
+        .lightbox-prev, .lightbox-next {
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 16px;
+        }
+
+        .lightbox-prev {
+            left: 10px;
+        }
+
+        .lightbox-next {
+            right: 10px;
+        }
+
+        /* نص التنبيه */
+        .warning-text {
+            font-size: 1em;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        /* زر التحميل */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(45deg, #007BFF, #00C6FF);
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1em;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 30px; /* المسافة التي طلبتها أسفل الزر */
+        }
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0, 123, 255, 0.4);
+        }
+        .download-btn .icon {
+            margin-left: 10px;
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- عارض الصور (Lightbox) -->
+    <div id="myLightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightboxImg">
+        <a class="lightbox-prev">&#10094;</a>
+        <a class="lightbox-next">&#10095;</a>
+    </div>
+
+    <!-- المحتوى الرئيسي للصفحة -->
+    <div class="content-wrapper">
+        
+        <div class="logo-container">
+            <!-- === تم تغيير الشعار هنا === -->
+            <img src="https://i.postimg.cc/rm50gg3z/Whats-App-Image-2025-10-02-at-4-15-54-PM.jpg" alt="App Logo" class="logo">
+        </div>
+        
+        <div class="title-container">
+            <h1 class="app-title">APP</h1> <!-- يمكنك تغيير اسم التطبيق هنا إذا أردت -->
+            <button class="share-btn" id="shareButton" aria-label="مشاركة">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"></path></svg>
+                <div class="tooltip">تم النسخ!</div>
+            </button>
+        </div>
+
+        <p class="app-description">وصف بسيط ومميز للتطبيق الجديد</p>
+
+        <!-- معرض الصور -->
+        <div class="gallery">
+            <!-- سيتم إضافة الصور هنا بواسطة جافاسكريبت -->
+        </div>
+        
+        <p class="warning-text">
+            قد يظهر لك تحذير من جوجل بأن التطبيق يمكن أن يكون ضارًا. لا تقلق، التطبيق آمن تمامًا. هذا مجرد إجراء حماية معياري من جوجل للتطبيقات التي يتم تنزيلها من خارج المتجر الرسمي.
+        </p>
+
+        <!-- === تم تغيير رابط التحميل هنا === -->
+        <a href="https://apk.e-droid.net/apk/app3760290-c4w5f2.apk?v=5" class="download-btn">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+            </svg>
+            <span>تنزيل التطبيق</span>
+        </a>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryContainer = document.querySelector('.gallery');
+            const lightbox = document.getElementById('myLightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const closeBtn = document.querySelector('.lightbox-close');
+            const prevBtn = document.querySelector('.lightbox-prev');
+            const nextBtn = document.querySelector('.lightbox-next');
+
+            // --- === تم تغيير روابط الصور هنا === ---
+            const images = [
+                "https://i.postimg.cc/sfc8NzY3/Whats-App-Image-2025-10-02-at-9-11-15-PM.jpg",
+                "https://i.postimg.cc/tR5fMb3y/Whats-App-Image-2025-10-02-at-9-11-04-PM.jpg",
+                "https://i.postimg.cc/HW2Khmwg/Whats-App-Image-2025-10-02-at-9-10-55-PM.jpg",
+                "https://i.postimg.cc/v8zjNyrw/Whats-App-Image-2025-10-02-at-9-10-44-PM.jpg",
+                "https://i.postimg.cc/9XpSn2dj/Whats-App-Image-2025-10-02-at-9-10-36-PM.jpg",
+                "https://i.postimg.cc/qBLY5rsV/Whats-App-Image-2025-10-02-at-9-10-27-PM.jpg",
+                "https://i.postimg.cc/8kH30GhK/Whats-App-Image-2025-10-02-at-9-10-20-PM.jpg"
+            ];
+
+            let currentIndex = 0;
+
+            images.forEach((src, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `لقطة شاشة للتطبيق ${index + 1}`;
+                galleryItem.appendChild(img);
+                galleryContainer.appendChild(galleryItem);
+                galleryItem.addEventListener('click', () => openLightbox(index));
+            });
+
+            function openLightbox(index) {
+                currentIndex = index;
+                lightboxImg.src = images[currentIndex];
+                lightbox.style.display = 'flex';
+            }
+
+            function closeLightbox() { lightbox.style.display = 'none'; }
+            function showNextImage() {
+                currentIndex = (currentIndex + 1) % images.length;
+                lightboxImg.src = images[currentIndex];
+            }
+            function showPrevImage() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                lightboxImg.src = images[currentIndex];
+            }
+
+            closeBtn.addEventListener('click', closeLightbox);
+            nextBtn.addEventListener('click', showNextImage);
+            prevBtn.addEventListener('click', showPrevImage);
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            // --- كود زر المشاركة (بدون تغيير) ---
+            const shareButton = document.getElementById('shareButton');
+            
+            shareButton.addEventListener('click', async () => {
+                const shareData = {
+                    title: document.title,
+                    text: 'تحميل هذا التطبيق الرائع!',
+                    url: window.location.href
+                };
+
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                    } catch (err) {
+                        console.error('خطأ في المشاركة:', err);
+                    }
+                } else {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        shareButton.classList.add('show-tooltip');
+                        setTimeout(() => {
+                            shareButton.classList.remove('show-tooltip');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('فشل نسخ الرابط:', err);
+                        alert('فشل نسخ الرابط، يرجى نسخه يدويًا.');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
